@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#090b13">
+<meta name="description" content="EYMEN GALACTIC OS - kişisel araç paneli">
+<link rel="manifest" href="manifest.webmanifest">
+<title>EYMEN GALACTIC OS</title>
+<style>
+:root{--bg:#070d1a;--ink:#f3f7ff;--muted:#9eafc8;--cyan:#7de8f2;--violet:#a9a4ff;--rose:#d78aa8}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% -5%,rgba(68,150,202,.22),transparent 43%),radial-gradient(ellipse at 95% 45%,rgba(118,103,190,.14),transparent 35%),linear-gradient(180deg,rgba(5,10,23,.74),rgba(5,9,20,.94)),url("galactic_wallpaper.jpg") center/cover no-repeat}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.13;background-image:radial-gradient(#d6faff .8px,transparent .8px);background-size:42px 42px}
+header{text-align:center;padding:22px 12px 10px}
+.brand{font-size:9px;letter-spacing:4px;color:#8bdde8;font-weight:700}
+.brand strong{display:block;font-size:27px;letter-spacing:6px;color:#fff;text-shadow:0 0 24px rgba(125,232,242,.42);margin:3px 0}
+.clockbox{margin:6px 14px 13px;padding:13px 8px 15px;text-align:center;background:linear-gradient(120deg,rgba(21,39,63,.55),rgba(13,20,40,.3));border:1px solid rgba(125,232,242,.18);border-radius:20px;box-shadow:inset 0 1px rgba(255,255,255,.06)}
+#clock{font-size:clamp(38px,10vw,55px);font-weight:650;letter-spacing:1px;font-variant-numeric:tabular-nums;text-shadow:0 0 22px rgba(125,232,242,.28)}
+#date{font-size:12px;color:#b7c7dc;margin-top:2px;text-transform:capitalize}
+.dashline{margin:0 15px 12px;padding:9px 12px;display:flex;justify-content:space-between;gap:8px;align-items:center;border-left:2px solid #7de8f2;background:linear-gradient(90deg,rgba(61,110,139,.2),transparent);color:#a9c4d7;font-size:9px;letter-spacing:1px}.dashline span:last-child{font-size:10px;letter-spacing:0;color:#e7f7ff}
+.launcher{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:0 14px 17px}
+.launcher a{color:#eaf7ff;text-decoration:none;text-align:center;padding:10px 3px 9px;border:1px solid rgba(125,232,242,.17);border-radius:15px;background:rgba(18,31,52,.55);font-size:10px;font-weight:650;box-shadow:0 5px 16px rgba(0,0,0,.12)}
+.launcher .symbol{display:block;font-size:21px;color:var(--cyan);margin-bottom:3px;text-shadow:0 0 12px rgba(125,232,242,.55)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 13px 14px}
+.panel{display:none;min-width:0;padding:13px 12px;background:linear-gradient(145deg,rgba(20,34,57,.67),rgba(10,17,34,.62));border:1px solid rgba(125,232,242,.17);border-radius:17px;box-shadow:0 8px 22px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.045);backdrop-filter:blur(12px)}
+.panel h2{font-size:13px;font-weight:650;margin:0 0 10px;display:flex;align-items:center;gap:7px;color:#f1f6ff}
+.ico{font-size:17px;color:var(--cyan);text-shadow:0 0 11px rgba(125,232,242,.48)}
+.full{grid-column:1/-1}.panel.active{display:block;grid-column:1/-1}
+.display{font-size:24px;font-weight:650;letter-spacing:.5px;font-variant-numeric:tabular-nums;text-align:center;padding:6px 0;color:#f5fbff}
+button{border:1px solid rgba(133,204,219,.24);background:linear-gradient(140deg,rgba(60,91,124,.82),rgba(39,53,86,.88));color:#f7fbff;border-radius:11px;padding:9px 10px;font-weight:650;font-size:12px;cursor:pointer}
+.controls{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.controls button{flex:1;min-width:52px}
+input,textarea,select{width:100%;border:1px solid rgba(139,193,210,.25);background:rgba(4,10,22,.62);color:#f6faff;border-radius:10px;padding:10px;font:inherit;font-size:13px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:rgba(125,232,242,.7);box-shadow:0 0 0 2px rgba(125,232,242,.08)}
+textarea{min-height:105px;resize:vertical}
+.calcrow{display:flex;gap:6px}.calcrow input{min-width:0;text-align:right;font-size:20px}
+.hint{font-size:10px;color:var(--muted);text-align:center;margin:8px 0 11px}
+#laps{font-size:11px;color:#c7d8e8;max-height:48px;overflow:auto;text-align:center}
+.calcdisplay{font-size:25px!important;text-align:right;font-weight:750;margin-bottom:8px}
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.keypad .key{padding:10px 2px;font-size:16px;border-radius:9px;background:rgba(39,56,81,.9);border-color:rgba(163,207,225,.12)}
+.keypad .op,.keypad .equal{background:linear-gradient(140deg,#587b9e,#455477)}
+.keypad .muted{background:rgba(63,76,99,.82)}
+#noteTitle{margin-bottom:7px;font-weight:650}#note{min-height:115px}
+.notes-list,.task-list{margin-top:9px;display:flex;flex-direction:column;gap:6px;max-height:200px;overflow:auto}
+.note-item,.task-row{display:flex;align-items:center;gap:7px;padding:8px;border:1px solid rgba(139,193,210,.15);border-radius:10px;background:rgba(255,255,255,.035)}
+.note-open{flex:1;text-align:left;background:transparent;border:0;padding:4px;min-width:0;box-shadow:none}
+.note-open strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-open small{display:block;color:#aebed2;font-weight:400;margin-top:2px}
+.note-delete,.task-row button{padding:6px 8px}
+.task-entry{display:flex;gap:7px}.task-entry input{min-width:0}
+.task-row.done span{text-decoration:line-through;opacity:.55}.task-row span{flex:1;overflow-wrap:anywhere}
+.widebtn{width:100%;margin-top:7px}
+.mini-history{font-size:11px;color:#c8d9e8;max-height:70px;overflow:auto}.mini-history div{padding:4px;border-bottom:1px solid rgba(125,232,242,.1)}
+#alarmTime{margin-top:7px}
+.backup-hidden,.quick{display:none!important}
+footer{text-align:center;padding:12px 10px 24px;color:#8395af;font-size:10px;letter-spacing:.4px}
+@media(min-width:700px){main,.launcher,.clockbox{max-width:680px;margin-left:auto;margin-right:auto}.grid{gap:13px}.panel{padding:16px}}
+.launcher a.active{border-color:rgba(125,232,242,.72);background:linear-gradient(145deg,rgba(47,91,115,.72),rgba(30,43,73,.78));box-shadow:0 0 18px rgba(125,232,242,.16)}
+.panel .back-home{display:block;margin:0 0 12px auto;padding:6px 10px;border-radius:999px;background:rgba(45,65,91,.55);font-size:11px}
+
+.photo-pick{display:block;margin-top:8px;padding:10px;border:1px dashed rgba(125,232,242,.4);border-radius:10px;color:#bdebf2;font-size:12px;text-align:center;cursor:pointer}
+.photo-preview img,.attached-photo{max-width:100%;max-height:150px;object-fit:contain;border-radius:10px;margin-top:7px;border:1px solid rgba(125,232,242,.25)}
+.person-form{padding:11px;border-radius:13px;background:rgba(4,10,22,.34);border:1px solid rgba(125,232,242,.14)}
+.person-form label,.person-toolbar label{display:block;color:#a9c4d7;font-size:10px;letter-spacing:.4px;font-weight:700}
+.person-form label input,.person-toolbar input{margin-top:5px}
+.person-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+.person-toolbar{display:flex;align-items:end;justify-content:space-between;gap:8px;margin:12px 0}
+.person-toolbar label{flex:1}.person-toolbar select{margin-top:5px;width:100%;padding:10px;border-radius:9px;background:#07111f;color:#eef7ff;border:1px solid rgba(125,232,242,.25)}
+.personnel-list{display:flex;flex-direction:column;gap:8px}
+.person-card{padding:11px;border:1px solid rgba(125,232,242,.2);border-radius:12px;background:linear-gradient(120deg,rgba(28,52,75,.62),rgba(15,24,44,.65))}
+.person-card h3{font-size:13px;margin:0 0 8px;color:#effaff}
+.person-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
+.person-metrics div{padding:6px 7px;border-radius:7px;background:rgba(255,255,255,.045);font-size:10px;color:#a9bfd2}
+.person-metrics b{display:block;color:#f1f8ff;font-size:12px;margin-top:2px}
+.person-actions{display:flex;justify-content:flex-end;margin-top:8px;gap:6px}
+.person-actions button{padding:6px 9px}
+
+.control-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.control-shortcuts button{min-height:86px;border:1px solid rgba(125,232,242,.22);border-radius:14px;background:linear-gradient(145deg,rgba(27,48,75,.86),rgba(12,23,42,.92));color:#eefaff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:9px 4px}
+.control-shortcuts button span{font-size:23px;line-height:1.2}
+.control-shortcuts button b{font-size:12px}
+.control-shortcuts button small{font-size:10px;color:#9fb9ca}
+.control-shortcuts button.on{border-color:#5df3d0;box-shadow:0 0 13px rgba(93,243,208,.22);background:linear-gradient(145deg,rgba(20,83,82,.8),rgba(12,34,52,.95))}
+.camera-box{margin-top:10px;display:grid;gap:8px}
+.camera-box video{width:100%;max-height:330px;object-fit:cover;border-radius:13px;background:#050a12}
+
+
+.system-shortcuts{margin-top:16px;padding-top:12px;border-top:1px solid rgba(125,232,242,.16)}
+.system-shortcuts h3{font-size:13px;margin:0 0 10px;color:#dffaff}
+#system.active{grid-column:1/-1}
+.system-shortcuts .control-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.system-shortcuts .control-shortcuts button{min-height:76px}
+.system-shortcuts .control-shortcuts button span{font-size:21px}
+.system-shortcuts .control-shortcuts button b{font-size:11px}
+.system-shortcuts .control-shortcuts button small{font-size:9px}
+.system-shortcuts .control-shortcuts button.on{border-color:#5df3d0;box-shadow:0 0 13px rgba(93,243,208,.22)}
+
+</style>
+</head>
+<body>
+<header><div class="brand">YOUR PERSONAL DIGITAL SPACE<strong>EYMEN</strong>GALACTIC OS</div></header>
+<section class="clockbox"><div id="clock">00:00:00.000</div><div id="date">Yükleniyor…</div></section>
+<div class="dashline"><span>✦ BUGÜNÜN KONTROL MERKEZİ</span><span id="taskSummary">Görevler hazırlanıyor…</span></div>
+<nav class="launcher">
+<a href="#stopwatch"><span class="symbol">◷</span>Süre</a>
+<a href="#calculator"><span class="symbol">⌗</span>Hesap</a>
+<a href="#notepad"><span class="symbol">✎</span>Notlar</a>
+<a href="#tasks"><span class="symbol">✧</span>Görevler</a>
+<a href="#countdown"><span class="symbol">⌛</span>Zamanlayıcı</a>
+<a href="#reminder"><span class="symbol">♧</span>Hatırlatıcı</a>
+<a href="#assistant"><span class="symbol">◎</span>Asistan</a>
+<a href="#personnel"><span class="symbol">♙</span>Personel</a>
+<a href="#system"><span class="symbol">◈</span>Sistem</a>
+</nav>
+
+
+
+<main class="grid">
+<section id="stopwatch" class="panel"><h2><span class="ico">⏱</span> Kronometre</h2><div class="display" id="sw">00:00.00</div><div class="controls"><button id="swStart">Başlat</button><button id="swLap">Tur</button><button id="swReset">Sıfırla</button></div><div id="laps"></div></section>
+<section id="countdown" class="panel"><h2><span class="ico">⌛</span> Geri sayım</h2><div class="display" id="cd">05:00</div><input id="mins" type="number" min="0" max="999" placeholder="Dakika (örn. 5)" inputmode="numeric"><div class="controls" style="margin-top:7px"><button id="cdStart">Başlat</button><button id="cdPause">Duraklat</button><button id="cdReset">Sıfırla</button></div></section>
+<section id="calculator" class="panel"><h2><span class="ico">▦</span> Akıllı hesap makinesi</h2><input id="calc" class="calcdisplay" placeholder="0" inputmode="decimal" readonly><div class="keypad">
+<button data-k="C" class="key muted">C</button><button data-k="(" class="key muted">(</button><button data-k=")" class="key muted">)</button><button data-k="/" class="key op">÷</button>
+<button data-k="7" class="key">7</button><button data-k="8" class="key">8</button><button data-k="9" class="key">9</button><button data-k="*" class="key op">×</button>
+<button data-k="4" class="key">4</button><button data-k="5" class="key">5</button><button data-k="6" class="key">6</button><button data-k="-" class="key op">−</button>
+<button data-k="1" class="key">1</button><button data-k="2" class="key">2</button><button data-k="3" class="key">3</button><button data-k="+" class="key op">+</button>
+<button data-k="0" class="key zero">0</button><button data-k="." class="key">.</button><button data-k="DEL" class="key muted">⌫</button><button data-k="=" class="key equal">=</button>
+</div><div id="calcResult" class="hint">Hesaplamanı tuşlarla yap.</div><div id="calcHistory" class="mini-history"></div></section>
+<section id="notepad" class="panel"><h2><span class="ico">✎</span> Not defterim</h2><input id="noteTitle" placeholder="Not başlığı"><select id="noteCategory"><option>Genel</option><option>İş</option><option>Kişisel</option><option>Alışveriş</option><option>Hatırlatma</option></select><textarea id="note" placeholder="Aklındakileri buraya yaz…"></textarea><label class="photo-pick">📷 Nota fotoğraf ekle<input id="notePhoto" type="file" accept="image/*" hidden></label><div id="notePhotoPreview" class="photo-preview"></div><input id="noteSearch" placeholder="Notlarda ara…" style="margin-top:7px"><div class="controls" style="margin-top:8px"><button id="saveNote">Kaydet</button><button id="showNotes">Kaydedilenler (0)</button></div><div class="hint" id="saved">Kaydet'e basınca notun saklanır ve yazı alanı temizlenir.</div><div id="notesList" class="notes-list" hidden></div></section>
+<section id="tasks" class="panel full"><h2><span class="ico">✧</span> Günlük görevler</h2><div class="task-entry"><input id="taskInput" placeholder="Yeni görev ekle…"><button id="addTask">Ekle</button></div><label class="photo-pick">📷 Göreve fotoğraf ekle<input id="taskPhoto" type="file" accept="image/*" hidden></label><div id="taskPhotoPreview" class="photo-preview"></div><div id="taskList" class="task-list"></div></section>
+<section id="personnel" class="panel full"><h2><span class="ico">♙</span> Personel performans</h2>
+<div class="person-form">
+<label>PERSONEL İSMİ<input id="pName" placeholder="Personel adı"></label>
+<div class="person-fields">
+<label>BAŞLANGIÇ<input id="pBaslangic" type="number" min="0" placeholder="0"></label>
+<label>K.BAŞLANGIÇ<input id="pKBaslangic" type="number" min="0" placeholder="0"></label>
+<label>BAŞLANGIÇ CİRO<input id="pBasCiro" type="number" min="0" step="0.01" placeholder="0"></label>
+<label>İÇECEK<input id="pIcecek" type="number" min="0" placeholder="0"></label>
+<label>ÇORBA<input id="pCorba" type="number" min="0" placeholder="0"></label>
+<label>TATLI<input id="pTatli" type="number" min="0" placeholder="0"></label>
+<label>GENEL CİRO<input id="pGenelCiro" type="number" min="0" step="0.01" placeholder="0"></label>
+</div><button id="addPerson" class="widebtn">＋ PERSONEL EKLE</button>
+</div><div class="person-toolbar"><label>Görünüm<select id="personPeriod"><option value="day">Günlük</option><option value="week">Haftalık</option><option value="month">Aylık</option><option value="all">Toplam</option></select></label><label>Tarih<input id="personDate" type="date"></label><button id="exportPeople">Excel (.xlsx) indir</button></div><div id="personPeriodLabel" class="hint"></div>
+<div id="personnelList" class="personnel-list"></div><div id="personnelSummary" class="hint">Henüz personel kaydı yok.</div></section>
+<section id="system" class="panel"><h2><span class="ico">◈</span> Sistem durumu</h2><div id="deviceInfo" class="hint">Kontrol ediliyor…</div><button id="refreshDevice" class="widebtn">Yenile</button>
+<div class="system-shortcuts">
+  <h3>⚡ Hızlı kontrol merkezi</h3>
+  <div class="control-shortcuts">
+    <button type="button" id="torchBtn"><span>🔦</span><b>Fener</b><small>Telefon ışığı</small></button>
+    <button type="button" id="rotateBtn"><span>📱</span><b>Ekran döndür</b><small>Yön kilidi</small></button>
+    <button type="button" id="wifiBtn"><span>📶</span><b>Wi-Fi</b><small>Ağ ayarları</small></button>
+    <button type="button" id="soundBtn"><span>🔊</span><b>Ses</b><small>Ses ayarları</small></button>
+    <button type="button" id="brightnessBtn"><span>☀️</span><b>Parlaklık</b><small>Ekran ayarları</small></button>
+    <button type="button" id="dndBtn"><span>🌙</span><b>Rahatsız etme</b><small>Bildirim ayarları</small></button>
+    <button type="button" id="cameraBtn"><span>📷</span><b>Kamera</b><small>Kamera önizleme</small></button>
+    <button type="button" id="screenshotBtn"><span>📸</span><b>Ekran görüntüsü</b><small>Ekran paylaşımı</small></button>
+    <button type="button" id="qrBtn"><span>▦</span><b>QR okuyucu</b><small>Kamerayla tara</small></button>
+    <button type="button" id="recorderBtn"><span>🎙️</span><b>Ses kaydı</b><small>Kayıt başlat/durdur</small></button>
+  </div>
+  <div id="controlStatus" class="hint" aria-live="polite">Bir kısayola dokun. Kamera ve mikrofon izinleri istenebilir.</div>
+  <div id="cameraBox" class="camera-box" hidden>
+    <video id="cameraPreview" autoplay playsinline></video>
+    <div id="qrResult" class="hint"></div>
+    <button type="button" id="cameraClose" class="widebtn">Kamerayı kapat</button>
+  </div>
+  <div id="recordingBox" class="camera-box" hidden>
+    <audio id="recordingPlayback" controls style="width:100%"></audio>
+    <a id="recordingDownload" class="photo-pick" hidden>Kaydı indir</a>
+  </div>
+</div>
+</section>
+<section id="reminder" class="panel"><h2><span class="ico">☼</span> Hatırlatıcı</h2><input id="alarmText" placeholder="Hatırlatıcı adı"><input id="alarmTime" type="time" style="margin-top:7px"><button id="setAlarm" class="widebtn">Hatırlatıcı kur</button><div id="alarmStatus" class="hint">Sayfa açık kalmalı.</div></section>
+<section id="assistant" class="panel full"><h2><span class="ico">◉</span> EYMEN akıllı asistan</h2><div class="task-entry"><input id="assistantCommand" placeholder="Komut yaz: notları aç, görevleri aç…"><button id="runCommand">Çalıştır</button></div>
+<div class="controls" style="margin-top:8px"><button id="voiceStart">🎙 Sesli komut</button><button id="voiceStop">Durdur</button></div>
+<div id="voiceText" class="hint">Yazılı komut her telefonda çalışır. Sesli komut tarayıcı desteğine bağlıdır.</div></section>
+<section class="panel full backup-hidden"><h2><span class="ico">⇅</span> Veri yedekleme</h2><div class="controls"><button id="exportData">Yedek indir</button><button id="importData">Yedek yükle</button><input id="importFile" type="file" accept="application/json,.json" hidden></div><div id="backupStatus" class="hint">Notlarını ve görevlerini JSON dosyası olarak sakla.</div></section>
+
+</main>
+<div class="quick">
+<button onclick="location.reload()">⟳<br>Yenile</button>
+<button onclick="document.getElementById('mins').focus()">⌛<br>Süre</button>
+<button onclick="document.getElementById('calc').focus()">▦<br>Hesap</button>
+<button onclick="document.getElementById('note').focus()">✎<br>Notlar</button>
+</div>
+<footer>EYMEN GALACTIC OS　·　KİŞİSEL DİJİTAL ALAN</footer>
+<script>
+const $=id=>document.getElementById(id);
+function tick(){const d=new Date();$('clock').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':')+'.'+String(d.getMilliseconds()).padStart(3,'0');$('date').textContent=d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+tick();setInterval(tick,40);
+let swRun=false,swBase=0,swElapsed=0,swFrame=null;
+function fmtSw(ms){let cs=Math.floor(ms/10),s=Math.floor(cs/100),m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')+'.'+String(cs%100).padStart(2,'0')}
+function drawSw(){let v=swElapsed+(swRun?performance.now()-swBase:0);$('sw').textContent=fmtSw(v);if(swRun)swFrame=requestAnimationFrame(drawSw)}
+$('swStart').onclick=()=>{if(swRun){swElapsed+=performance.now()-swBase;swRun=false;$('swStart').textContent='Devam';cancelAnimationFrame(swFrame)}else{swBase=performance.now();swRun=true;$('swStart').textContent='Duraklat';drawSw()}};
+let lapNo=0;$('swLap').onclick=()=>{let v=swElapsed+(swRun?performance.now()-swBase:0);lapNo++;$('laps').textContent='Tur '+lapNo+': '+fmtSw(v)+' · '+$('laps').textContent};
+$('swReset').onclick=()=>{swRun=false;swElapsed=0;cancelAnimationFrame(swFrame);$('sw').textContent='00:00.00';$('swStart').textContent='Başlat';$('laps').textContent=''};
+let cdEnd=0,cdRemain=300,cdTimer=null,cdRunning=false;
+function drawCd(){let s=Math.max(0,Math.ceil(cdRemain/1000));$('cd').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+$('mins').onchange=()=>{let m=Math.max(0,Math.min(999,Number($('mins').value)||0));cdRemain=m*60000;drawCd()};
+$('cdStart').onclick=()=>{if(cdRunning)return;if($('mins').value!==''&&!cdTimer)cdRemain=Math.max(0,Number($('mins').value)||0)*60000;if(cdRemain<=0)return;cdEnd=Date.now()+cdRemain;cdRunning=true;cdTimer=setInterval(()=>{cdRemain=cdEnd-Date.now();drawCd();if(cdRemain<=0){clearInterval(cdTimer);cdTimer=null;cdRunning=false;cdRemain=0;drawCd();alert('Geri sayım tamamlandı!');if(navigator.vibrate)navigator.vibrate([300,150,300])}},200)};
+$('cdPause').onclick=()=>{if(cdRunning){cdRemain=Math.max(0,cdEnd-Date.now());clearInterval(cdTimer);cdTimer=null;cdRunning=false;drawCd()}};
+$('cdReset').onclick=()=>{clearInterval(cdTimer);cdTimer=null;cdRunning=false;cdRemain=(Number($('mins').value)||5)*60000;drawCd()};
+drawCd();
+
+let calcExpr='';
+function showCalc(){ $('calc').value=calcExpr.replace(/\*/g,'×').replace(/\//g,'÷')||'0'; }
+document.querySelectorAll('[data-k]').forEach(b=>b.addEventListener('click',()=>{
+ const k=b.dataset.k;
+ if(k==='C'){calcExpr='';$('calcResult').textContent='Temizlendi.'}
+ else if(k==='DEL'){calcExpr=calcExpr.slice(0,-1)}
+ else if(k==='='){
+   try{
+     if(!calcExpr || ![...calcExpr].every(c=>'0123456789+-*/(). '.includes(c))) throw Error();
+     const result=Function('"use strict";return ('+calcExpr+')')();
+     if(!Number.isFinite(result)) throw Error();
+     $('calcResult').textContent='Sonuç: '+result;
+     calcExpr=String(result);
+   }catch(e){$('calcResult').textContent='İşlem hatalı.'}
+ }else{calcExpr+=k}
+ showCalc();
+}));
+
+let savedNotes=[];
+try{savedNotes=JSON.parse(localStorage.getItem('eymen-notes-list')||'[]');if(!Array.isArray(savedNotes))savedNotes=[]}catch(e){savedNotes=[]}
+function persistNotes(){localStorage.setItem('eymen-notes-list',JSON.stringify(savedNotes))}
+function updateNotesButton(){$('showNotes').textContent='Kaydedilenler ('+savedNotes.length+')'}
+function renderNotes(){
+ const box=$('notesList');box.innerHTML='';
+ if(!savedNotes.length){box.innerHTML='<div class="hint">Henüz kaydedilmiş not yok.</div>';return}
+ savedNotes.map((n,i)=>({...n,_i:i})).filter(n=>(n.title+' '+n.body+' '+(n.category||'')).toLocaleLowerCase('tr-TR').includes(($('noteSearch').value||'').toLocaleLowerCase('tr-TR'))).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).forEach(n=>{const i=n._i;
+  const row=document.createElement('div');row.className='note-item';
+  const open=document.createElement('button');open.className='note-open';
+  const title=document.createElement('strong');title.textContent=n.title||'Başlıksız not';
+  const preview=document.createElement('small');preview.textContent='['+(n.category||'Genel')+'] '+((n.body||'').slice(0,65)||'Boş not')+(n.photo?' · 📷':'')+(n.pinned?' · ★':'');
+  open.append(title,preview);open.onclick=()=>{$('noteTitle').value=n.title||'';$('note').value=n.body||'';$('noteCategory').value=n.category||'Genel';notePhotoData=n.photo||'';$('notePhotoPreview').innerHTML=notePhotoData?'<img src="'+notePhotoData+'">':'';$('note').dataset.editIndex=String(i);$('saved').textContent='Not düzenleme alanına yüklendi. Kaydet düğmesine basınca güncellenir.';};
+  const pin=document.createElement('button');pin.textContent=n.pinned?'★':'☆';pin.onclick=()=>{savedNotes[i].pinned=!savedNotes[i].pinned;persistNotes();renderNotes()};row.append(open,pin);const del=document.createElement('button');del.className='note-delete';del.textContent='Sil';del.onclick=()=>{if(confirm('Bu not silinsin mi?')){savedNotes.splice(i,1);persistNotes();renderNotes();updateNotesButton()}};
+  row.append(open,del);box.append(row);
+ });
+}
+$('saveNote').onclick=()=>{
+ const title=$('noteTitle').value.trim();
+ const body=$('note').value.trim();
+ if(!title&&!body){$('saved').textContent='Önce bir not yaz.';return}
+ const editing=$('note').dataset.editIndex;
+ if(editing!==undefined&&editing!==''&&savedNotes[Number(editing)]){
+  savedNotes[Number(editing)]={...savedNotes[Number(editing)],title,body,category:$('noteCategory').value,photo:notePhotoData,date:new Date().toLocaleString('tr-TR')};
+  delete $('note').dataset.editIndex;
+ }else{
+  savedNotes.unshift({title,body,category:$('noteCategory').value,photo:notePhotoData,pinned:false,date:new Date().toLocaleString('tr-TR')});
+ }
+ persistNotes();$('noteTitle').value='';$('note').value='';$('noteCategory').value='Genel';notePhotoData='';$('notePhoto').value='';$('notePhotoPreview').innerHTML='';$('saved').textContent='Not kaydedildi ✓ Yeni not yazabilirsin.';
+ updateNotesButton();renderNotes();$('notesList').hidden=false;
+};
+$('showNotes').onclick=()=>{const box=$('notesList');box.hidden=!box.hidden;if(!box.hidden)renderNotes()};$('noteSearch').addEventListener('input',renderNotes);
+$('noteTitle').value='';$('note').value='';
+updateNotesButton();renderNotes();
+
+
+let tasks=[];try{tasks=JSON.parse(localStorage.getItem('eymen-tasks')||'[]')}catch(e){tasks=[]}
+function renderTasks(){$('taskList').innerHTML='';let pending=tasks.filter(t=>!t.done).length;let summary=$('taskSummary');if(summary)summary.textContent=pending+' bekleyen görev · '+tasks.length+' toplam';tasks.forEach((t,i)=>{let row=document.createElement('div');row.className='task-row'+(t.done?' done':'');let cb=document.createElement('input');cb.type='checkbox';cb.checked=!!t.done;cb.style.width='20px';cb.onchange=()=>{tasks[i].done=cb.checked;saveTasks()};let label=document.createElement('span');label.textContent=t.text;row.append(label);if(t.photo){let im=document.createElement('img');im.src=t.photo;im.className='attached-photo';im.alt='Görev fotoğrafı';im.onclick=()=>window.open(t.photo,'_blank');row.append(im)}let del=document.createElement('button');del.textContent='Sil';del.onclick=()=>{tasks.splice(i,1);saveTasks()};row.append(cb,del);$('taskList').append(row)})}
+function saveTasks(){localStorage.setItem('eymen-tasks',JSON.stringify(tasks));renderTasks()}
+$('addTask').onclick=()=>{let v=$('taskInput').value.trim();if(v){tasks.unshift({text:v,done:false,photo:taskPhotoData});$('taskInput').value='';taskPhotoData='';$('taskPhoto').value='';$('taskPhotoPreview').innerHTML='';saveTasks()}};$('taskInput').onkeydown=e=>{if(e.key==='Enter')$('addTask').click()};renderTasks();
+async function refreshDevice(){let a=[];try{if(navigator.getBattery){let b=await navigator.getBattery();a.push('Pil '+Math.round(b.level*100)+'%'+(b.charging?' · Şarjda':''))}else a.push('Pil bilgisi tarayıcıda desteklenmiyor')}catch(e){a.push('Pil bilgisi alınamadı')}try{if(navigator.storage&&navigator.storage.estimate){let q=await navigator.storage.estimate();a.push('Uygulama alanı '+(q.usage/1048576).toFixed(1)+' MB')}}catch(e){}$('deviceInfo').textContent=a.join(' · ')}
+$('refreshDevice').onclick=refreshDevice;refreshDevice();
+let alarmHandle=null;$('setAlarm').onclick=()=>{if(alarmHandle)clearTimeout(alarmHandle);let tm=$('alarmTime').value;if(!tm){$('alarmStatus').textContent='Önce saat seç.';return}let [hh,mm]=tm.split(':').map(Number),when=new Date();when.setHours(hh,mm,0,0);if(when<=new Date())when.setDate(when.getDate()+1);let msg=$('alarmText').value.trim()||'Hatırlatıcın';alarmHandle=setTimeout(()=>{alert('EYMEN hatırlatıyor: '+msg);if(navigator.vibrate)navigator.vibrate([250,120,250])},when-Date.now());$('alarmStatus').textContent=when.toLocaleString('tr-TR')+' için kuruldu. Sayfa açık kalmalı.'};
+function runAssistantCommand(raw){
+ const t=(raw||'').toLocaleLowerCase('tr-TR').trim();
+ if(!t){$('voiceText').textContent='Bir komut yaz veya sesli komut ver.';return}
+ const routes=[['kronometre','stopwatch'],['süre','stopwatch'],['hesap','calculator'],['not','notepad'],['görev','tasks'],['zamanlayıcı','countdown'],['geri say','countdown'],['hatırlat','reminder'],['alarm','reminder'],['personel','personnel'],['sistem','system']];
+ let found=routes.find(x=>t.includes(x[0]));
+ if(found){let link=document.querySelector('.launcher a[href="#'+found[1]+'"]');if(link)link.click();$('voiceText').textContent=found[0]+' bölümü açıldı.';return}
+ if(t.includes('başlat')&&t.includes('krono')){$('swStart').click();$('voiceText').textContent='Kronometre başlatıldı.';return}
+ if(t.includes('durdur')&&t.includes('krono')){$('swStart').click();$('voiceText').textContent='Kronometre durdurma komutu gönderildi.';return}
+ if(t.startsWith('ekle ')||t.startsWith('görev ekle ')){let v=t.replace(/^ekle\s+|^görev ekle\s+/,'');$('taskInput').value=v;$('addTask').click();let link=document.querySelector('.launcher a[href="#tasks"]');if(link)link.click();$('voiceText').textContent='Görev eklendi.';return}
+ if(t.includes('ana ekran')){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.launcher a').forEach(a=>a.classList.remove('active'));window.scrollTo({top:0,behavior:'smooth'});$('voiceText').textContent='Ana ekran açıldı.';return}
+ $('voiceText').textContent='Bu komutu henüz tanımıyorum. “Notları aç”, “görevleri aç” veya “kronometreyi aç” diyebilirsin.';
+}
+$('runCommand').onclick=()=>{runAssistantCommand($('assistantCommand').value);$('assistantCommand').value=''};
+$('assistantCommand').onkeydown=e=>{if(e.key==='Enter')$('runCommand').click()};
+let rec=null;const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(Speech){rec=new Speech();rec.lang='tr-TR';rec.onresult=e=>{let t=e.results[0][0].transcript.toLocaleLowerCase('tr-TR');$('voiceText').textContent='Duydum: '+t;runAssistantCommand(t)};rec.onerror=e=>$('voiceText').textContent='Ses tanıma: '+e.error}
+$('voiceStart').onclick=()=>{if(!rec){$('voiceText').textContent='Bu tarayıcı ses tanımayı desteklemiyor. Yukarıdaki komut alanını kullanabilirsin.';return}try{rec.start();$('voiceText').textContent='Dinliyorum…'}catch(e){$('voiceText').textContent='Mikrofon zaten açık.'}};$('voiceStop').onclick=()=>{if(rec)rec.stop()};
+$('exportData').onclick=()=>{let d={version:6,notes:savedNotes,tasks,calcHistory,people};let blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='EYMEN_Yedek.json';a.click();URL.revokeObjectURL(a.href);$('backupStatus').textContent='Yedek indirildi.'};
+$('importData').onclick=()=>$('importFile').click();$('importFile').onchange=async()=>{let f=$('importFile').files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(Array.isArray(d.notes)){savedNotes=d.notes;persistNotes()}if(Array.isArray(d.tasks)){tasks=d.tasks;saveTasks()}if(Array.isArray(d.people)){people=d.people;savePeople()}if(Array.isArray(d.calcHistory)){calcHistory=d.calcHistory;localStorage.setItem('eymen-calc-history',JSON.stringify(calcHistory));renderCalcHistory()}updateNotesButton();renderNotes();$('backupStatus').textContent='Yedek geri yüklendi ✓'}catch(e){$('backupStatus').textContent='Yedek dosyası okunamadı.'}};
+
+
+// Fotoğrafları küçülterek yerel kaydet
+async function imageData(file){
+ return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=reject;reader.onload=()=>{const img=new Image();img.onload=()=>{const max=1000,scale=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.72))};img.onerror=reject;img.src=reader.result};reader.readAsDataURL(file)});
+}
+let notePhotoData='',taskPhotoData='';
+$('notePhoto').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{notePhotoData=await imageData(f);$('notePhotoPreview').innerHTML='<img alt="Not fotoğrafı" src="'+notePhotoData+'">'}catch(err){$('saved').textContent='Fotoğraf açılamadı.'}};
+$('taskPhoto').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{taskPhotoData=await imageData(f);$('taskPhotoPreview').innerHTML='<img alt="Görev fotoğrafı" src="'+taskPhotoData+'">'}catch(err){$('taskPhotoPreview').textContent='Fotoğraf açılamadı.'}};
+
+// Personel kayıtları
+let people=[];try{people=JSON.parse(localStorage.getItem('eymen-personnel')||'[]');if(!Array.isArray(people))people=[]}catch(e){people=[]}
+$('personDate').value=new Date().toISOString().slice(0,10);
+const pFields=[['baslangic','BAŞLANGIÇ'],['kbaslangic','K.BAŞLANGIÇ'],['basCiro','BAŞLANGIÇ CİRO'],['icecek','İÇECEK'],['corba','ÇORBA'],['tatli','TATLI'],['genelCiro','GENEL CİRO']];
+const money=k=>k.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₺';
+function savePeople(){localStorage.setItem('eymen-personnel',JSON.stringify(people));renderPeople()}
+function getPeoplePeriod(){
+ const raw=$('personDate').value||new Date().toISOString().slice(0,10);
+ const [y,m,d]=raw.split('-').map(Number);const anchor=new Date(y,m-1,d);
+ let start=new Date(anchor),end=new Date(anchor),mode=$('personPeriod')?.value||'day';
+ if(mode==='all')return {mode,start:'0000-01-01',end:'9999-12-31',label:'TÜM KAYITLAR'};
+ if(mode==='week'){const day=(anchor.getDay()+6)%7;start.setDate(anchor.getDate()-day);end=new Date(start);end.setDate(start.getDate()+6)}
+ if(mode==='month'){start=new Date(y,m-1,1);end=new Date(y,m,0)}
+ const fmt=x=>[x.getFullYear(),String(x.getMonth()+1).padStart(2,'0'),String(x.getDate()).padStart(2,'0')].join('-');
+ return {mode,start:fmt(start),end:fmt(end),label:fmt(start)===fmt(end)?fmt(start):fmt(start)+' – '+fmt(end)};
+}
+function getPeopleInPeriod(){const r=getPeoplePeriod();return people.filter(p=>p.date>=r.start&&p.date<=r.end)}
+function aggregatePeople(records){
+ const map=new Map();
+ records.forEach(p=>{
+  const key=String(p.name||'').trim().toLocaleLowerCase('tr-TR');
+  if(!map.has(key)){const fresh={name:p.name,days:new Set(),entries:0};pFields.forEach(([k])=>fresh[k]=0);map.set(key,fresh)}
+  const a=map.get(key);a.days.add(p.date);a.entries++;
+  pFields.forEach(([k])=>a[k]+=Number(p[k]||0));
+ });
+ return [...map.values()].map(a=>({...a,dayCount:a.days.size}));
+}
+function renderPeople(){
+ const box=$('personnelList');box.innerHTML='';const period=getPeoplePeriod();const rawList=getPeopleInPeriod();const list=aggregatePeople(rawList);
+ const periodLabel=$('personPeriodLabel');if(periodLabel)periodLabel.textContent=(period.mode==='day'?'Günlük':period.mode==='week'?'Haftalık':period.mode==='month'?'Aylık':'Genel toplam')+' kayıtlar · '+period.label;
+ list.forEach((p,i)=>{const card=document.createElement('div');card.className='person-card';const title=document.createElement('h3');title.textContent=p.name+' · '+p.dayCount+' gün / '+p.entries+' kayıt';card.append(title);const metrics=document.createElement('div');metrics.className='person-metrics';pFields.forEach(([k,label])=>{const d=document.createElement('div');d.textContent=label;const b=document.createElement('b');b.textContent=k.toLowerCase().includes('ciro')?money(Number(p[k]||0)):String(p[k]??0);d.append(b);metrics.append(d)});card.append(metrics);const actions=document.createElement('div');actions.className='person-actions';const del=document.createElement('button');del.textContent='Sil';del.onclick=()=>{if(confirm(p.name+' kaydı silinsin mi?')){const period=getPeoplePeriod();people=people.filter(x=>!(String(x.name||'').trim().toLocaleLowerCase('tr-TR')===String(p.name||'').trim().toLocaleLowerCase('tr-TR')&&x.date>=period.start&&x.date<=period.end));savePeople()}};actions.append(del);card.append(actions);box.append(card)});
+ $('personnelSummary').textContent=list.length+' personel · '+(period.mode==='all'?'Tüm zamanlar toplamı':'Dönem toplamı')+' · Başlangıç toplamı: '+list.reduce((s,p)=>s+Number(p.baslangic||0),0)+' · K.BAŞLANGIÇ toplamı: '+list.reduce((s,p)=>s+Number(p.kbaslangic||0),0)+' · Genel ciro: '+money(list.reduce((s,p)=>s+Number(p.genelCiro||0),0));
+}
+$('addPerson').onclick=()=>{const name=$('pName').value.trim();if(!name){alert('Personel ismini yaz.');$('pName').focus();return}const p={name,date:$('personDate').value||new Date().toISOString().slice(0,10)};const inputIds={baslangic:'pBaslangic',kbaslangic:'pKBaslangic',basCiro:'pBasCiro',icecek:'pIcecek',corba:'pCorba',tatli:'pTatli',genelCiro:'pGenelCiro'};pFields.forEach(([k])=>p[k]=Number($(inputIds[k]).value)||0);people.push(p);['pName','pBaslangic','pKBaslangic','pBasCiro','pIcecek','pCorba','pTatli','pGenelCiro'].forEach(id=>$(id).value='');savePeople()};
+$('personDate').onchange=renderPeople;$('personPeriod').onchange=renderPeople;
+function xlsxDownload(filename, files){
+ const enc=new TextEncoder();
+ const crcTable=(()=>{let t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0}return t})();
+ const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=crcTable[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0};
+ const chunks=[],central=[];let offset=0;
+ for(const f of files){const name=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);let local=new Uint8Array(30+name.length+data.length),v=new DataView(local.buffer);v.setUint32(0,0x04034b50,true);v.setUint16(4,20,true);v.setUint16(6,0x0800,true);v.setUint16(8,0,true);v.setUint32(14,crc,true);v.setUint32(18,data.length,true);v.setUint32(22,data.length,true);v.setUint16(26,name.length,true);local.set(name,30);local.set(data,30+name.length);chunks.push(local);
+ let c=new Uint8Array(46+name.length),d=new DataView(c.buffer);d.setUint32(0,0x02014b50,true);d.setUint16(4,20,true);d.setUint16(6,20,true);d.setUint16(8,0x0800,true);d.setUint16(10,0,true);d.setUint32(16,crc,true);d.setUint32(20,data.length,true);d.setUint32(24,data.length,true);d.setUint16(28,name.length,true);d.setUint32(42,offset,true);c.set(name,46);central.push(c);offset+=local.length;}
+ const centralSize=central.reduce((a,b)=>a+b.length,0),end=new Uint8Array(22),ev=new DataView(end.buffer);ev.setUint32(0,0x06054b50,true);ev.setUint16(8,files.length,true);ev.setUint16(10,files.length,true);ev.setUint32(12,centralSize,true);ev.setUint32(16,offset,true);
+ const blob=new Blob([...chunks,...central,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+$('exportPeople').onclick=()=>{
+ const period=getPeoplePeriod(),date=period.label,rawList=getPeopleInPeriod();if(!rawList.length){alert('Seçilen dönem için personel kaydı yok.');return}const list=aggregatePeople(rawList);
+ const headers=['PERSONEL İSMİ','KAYIT GÜNÜ',...pFields.map(x=>x[1])],rows=list.map(p=>[p.name,p.dayCount,...pFields.map(([k])=>p[k]??0)]),totals=pFields.map(([k])=>list.reduce((s,p)=>s+Number(p[k]||0),0));
+ const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ const col=n=>{let s='';while(n){let r=(n-1)%26;s=String.fromCharCode(65+r)+s;n=Math.floor((n-1)/26)}return s};
+ const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Arial"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="11"/><name val="Arial"/></font></fonts><fills count="11"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF173653"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDCEBFA"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDDF3E5"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE4E9FF"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF0D9"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDDF5F3"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFCE4EC"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF4C7"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE8E0FF"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFFFFFFF"/></left><right style="thin"><color rgb="FFFFFFFF"/></right><top style="thin"><color rgb="FFFFFFFF"/></top><bottom style="thin"><color rgb="FFFFFFFF"/></bottom><diagonal/></border></borders><cellXfs count="11"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" applyFill="1" applyFont="1"/><xf numFmtId="0" fontId="0" fillId="3" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="4" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="5" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="6" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="7" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="8" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="9" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="10" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" applyFill="1" applyFont="1"/></cellXfs></styleSheet>`;
+ const cell=(r,c,val,style)=>{let ref=col(c)+r;if(typeof val==='number'&&Number.isFinite(val))return `<c r="${ref}" s="${style}"><v>${val}</v></c>`;return `<c r="${ref}" s="${style}" t="inlineStr"><is><t>${esc(val)}</t></is></c>`};
+ let sheetRows=[];sheetRows.push('<row r="1" ht="28" customHeight="1">'+headers.map((v,i)=>cell(1,i+1,v,1)).join('')+'</row>');
+ rows.forEach((r,i)=>{let rn=i+2;sheetRows.push(`<row r="${rn}">`+r.map((v,j)=>cell(rn,j+1,v,j===0?2:(j===1?3:(j===4?5:j+1)))).join('')+'</row>')});
+ let tr=rows.length+2;sheetRows.push(`<row r="${tr}">`+[cell(tr,1,'TOPLAM',10),cell(tr,2,list.length,10),...totals.map((v,i)=>cell(tr,i+3,v,10))].join('')+'</row>');
+ const widths=[24,13,16,18,20,14,14,14,20];const cols='<cols>'+widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')+'</cols>';
+ const worksheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>${cols}<sheetData>${sheetRows.join('')}</sheetData><autoFilter ref="A1:I${rows.length+1}"/></worksheet>`;
+ const files=[{name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},{name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},{name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Personel Raporu" sheetId="1" r:id="rId1"/></sheets></workbook>'},{name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},{name:'xl/styles.xml',data:styles},{name:'xl/worksheets/sheet1.xml',data:worksheet}];
+ xlsxDownload('EYMEN_Personel_'+date+'.xlsx',files);
+};
+renderPeople();
+
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+
+<script>
+(function(){
+ const links=[...document.querySelectorAll('.launcher a[href^="#"]')];
+ const panels=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+ function closePanels(){
+   panels.forEach(p=>p.classList.remove('active'));
+   links.forEach(a=>a.classList.remove('active'));
+ }
+ links.forEach(a=>{
+   a.addEventListener('click',function(e){
+     e.preventDefault();
+     const panel=document.querySelector(this.getAttribute('href'));
+     if(!panel)return;
+     closePanels();
+     panel.classList.add('active');
+     this.classList.add('active');
+     panel.scrollIntoView({behavior:'smooth',block:'start'});
+   });
+ });
+ panels.forEach(panel=>{
+   const back=document.createElement('button');
+   back.type='button'; back.className='back-home'; back.textContent='← Ana ekrana dön';
+   back.addEventListener('click',()=>{closePanels();window.scrollTo({top:0,behavior:'smooth'});});
+   panel.insertBefore(back,panel.firstChild);
+ });
+ closePanels();
+})();
+
+// EYMEN hızlı kontrol merkezi
+let torchStream = null;
+let cameraStream = null;
+let torchOn = false;
+function controlMessage(msg){const el=$('controlStatus');if(el)el.textContent=msg;}
+function stopTracks(stream){if(stream)stream.getTracks().forEach(track=>track.stop());}
+async function toggleTorch(){
+  const btn=$('torchBtn');
+  try{
+    if(torchOn && torchStream){
+      stopTracks(torchStream);torchStream=null;torchOn=false;
+      btn.classList.remove('on');controlMessage('Fener kapatıldı.');return;
+    }
+    if(!navigator.mediaDevices?.getUserMedia){controlMessage('Bu tarayıcı fener kontrolünü desteklemiyor.');return;}
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
+    const track=stream.getVideoTracks()[0];
+    if(!track || !('torch' in (track.getCapabilities?.()||{}))){
+      stopTracks(stream);controlMessage('Bu cihaz/tarayıcı feneri uygulama içinden açmaya izin vermiyor. Telefonun hızlı ayarlarından Fener’i kullanabilirsin.');return;
+    }
+    await track.applyConstraints({advanced:[{torch:true}]});
+    torchStream=stream;torchOn=true;btn.classList.add('on');controlMessage('Fener açık. Kapatmak için tekrar dokun.');
+  }catch(e){controlMessage('Fener açılamadı. Kamera izni ver veya telefonun hızlı ayarlarını kullan.');}
+}
+$('torchBtn')?.addEventListener('click',toggleTorch);
+
+$('rotateBtn')?.addEventListener('click',async()=>{
+  try{
+    if(!screen.orientation){controlMessage('Ekran yönü kontrolü bu tarayıcıda desteklenmiyor.');return;}
+    if(screen.orientation.unlock){screen.orientation.unlock();$('rotateBtn').classList.remove('on');controlMessage('Ekran yönü serbest bırakıldı.');return;}
+    if(screen.orientation.lock){
+      await screen.orientation.lock('landscape');
+      $('rotateBtn').classList.add('on');controlMessage('Yatay ekran kilidi etkin. Tekrar dokunarak serbest bırak.');
+    }else controlMessage('Ekran yönünü telefonun hızlı ayarlarından değiştirebilirsin.');
+  }catch(e){controlMessage('Ekran döndürme kilidi için uygulamayı tam ekranda açman gerekebilir. Otomatik döndürmeyi hızlı ayarlardan kullanabilirsin.');}
+});
+function openAndroidSetting(action){
+  const intent='intent:#Intent;action='+action+';end';
+  try{window.location.href=intent;controlMessage('Telefonun ilgili ayarları açılmaya çalışılıyor.');}
+  catch(e){controlMessage('Bu ayar ekranı tarayıcıdan açılamadı. Telefonun hızlı ayarlarını kullan.');}
+}
+$('wifiBtn')?.addEventListener('click',()=>openAndroidSetting('android.settings.WIFI_SETTINGS'));
+$('soundBtn')?.addEventListener('click',()=>openAndroidSetting('android.settings.SOUND_SETTINGS'));
+
+async function closeCamera(){
+  stopTracks(cameraStream);cameraStream=null;
+  if($('cameraPreview'))$('cameraPreview').srcObject=null;
+  if($('cameraBox'))$('cameraBox').hidden=true;
+  if($('cameraBtn'))$('cameraBtn').classList.remove('on');
+  controlMessage('Kamera kapatıldı.');
+}
+$('cameraBtn')?.addEventListener('click',async()=>{
+  if(cameraStream){await closeCamera();return;}
+  try{
+    if(!navigator.mediaDevices?.getUserMedia){controlMessage('Kamera erişimi bu tarayıcıda desteklenmiyor.');return;}
+    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+    $('cameraPreview').srcObject=cameraStream;$('cameraBox').hidden=false;$('cameraBtn').classList.add('on');
+    controlMessage('Kamera açık. Kapatmak için Kamera’ya veya aşağıdaki düğmeye dokun.');
+  }catch(e){cameraStream=null;controlMessage('Kamera açılamadı. Kamera iznini kontrol et ve HTTPS üzerinden aç.');}
+});
+$('cameraClose')?.addEventListener('click',closeCamera);
+window.addEventListener('pagehide',()=>{stopTracks(torchStream);stopTracks(cameraStream);});
+
+</script>
+<script>
+
+// EYMEN V10.9 - Sistem kısayolları
+(function(){
+ const $ = id => document.getElementById(id);
+ let torchStream=null, cameraStream=null, torchOn=false, recorder=null, recordedChunks=[], recordingStream=null, qrTimer=null;
+ const status = msg => { const el=$('controlStatus'); if(el) el.textContent=msg; };
+ const stop = s => { if(s) s.getTracks().forEach(t=>t.stop()); };
+ function androidSetting(action){
+   status('Telefonun ilgili ayar ekranı açılmaya çalışılıyor. Açılmazsa Android hızlı ayarlarını kullan.');
+   try { location.href='intent:#Intent;action='+action+';end'; }
+   catch(e){ status('Bu ayar ekranı tarayıcıdan açılamadı; telefonun Ayarlar uygulamasını kullan.'); }
+ }
+ $('wifiBtn')?.addEventListener('click',()=>androidSetting('android.settings.WIFI_SETTINGS'));
+ $('soundBtn')?.addEventListener('click',()=>androidSetting('android.settings.SOUND_SETTINGS'));
+ $('brightnessBtn')?.addEventListener('click',()=>androidSetting('android.settings.DISPLAY_SETTINGS'));
+ $('dndBtn')?.addEventListener('click',()=>androidSetting('android.settings.ZEN_MODE_SETTINGS'));
+
+ $('rotateBtn')?.addEventListener('click',async()=>{
+   try{
+     if(!screen.orientation?.lock){status('Bu Chrome sürümü ekran yönünü kilitlemeyi desteklemiyor. Otomatik döndürmeyi hızlı ayarlardan aç.');return;}
+     if($('rotateBtn').classList.contains('on')){
+       screen.orientation.unlock();$('rotateBtn').classList.remove('on');status('Ekran yönü serbest bırakıldı.');
+     } else {
+       await screen.orientation.lock('landscape');$('rotateBtn').classList.add('on');status('Yatay yön kilitlendi. Tekrar dokunarak serbest bırak.');
+     }
+   }catch(e){status('Android bu sayfada yön kilidine izin vermedi. Otomatik döndürmeyi hızlı ayarlardan kullan.');}
+ });
+ async function openCamera(){
+   if(!navigator.mediaDevices?.getUserMedia) throw new Error('CAMERA_UNAVAILABLE');
+   return await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+ }
+ async function closeCamera(){
+   stop(cameraStream);cameraStream=null;
+   if($('cameraPreview')) $('cameraPreview').srcObject=null;
+   if($('cameraBox')) $('cameraBox').hidden=true;
+   if(qrTimer) clearInterval(qrTimer);
+   $('cameraBtn')?.classList.remove('on');$('qrBtn')?.classList.remove('on');
+ }
+ $('cameraBtn')?.addEventListener('click',async()=>{
+   if(cameraStream){await closeCamera();status('Kamera kapatıldı.');return;}
+   try{
+     cameraStream=await openCamera();$('cameraPreview').srcObject=cameraStream;$('cameraBox').hidden=false;
+     $('qrResult').textContent='Kamera açık. Kapatmak için Kamera veya aşağıdaki düğmeye dokun.';
+     $('cameraBtn').classList.add('on');status('Kamera açıldı.');
+   }catch(e){status('Kamera açılamadı. Chrome kamera izni ve HTTPS/uygun güvenli bağlantı gerekir.');}
+ });
+ $('cameraClose')?.addEventListener('click',async()=>{await closeCamera();status('Kamera kapatıldı.');});
+
+ $('torchBtn')?.addEventListener('click',async()=>{
+   try{
+     if(torchOn&&torchStream){stop(torchStream);torchStream=null;torchOn=false;$('torchBtn').classList.remove('on');status('Fener kapatıldı.');return;}
+     if(!navigator.mediaDevices?.getUserMedia){status('Bu açılış biçiminde kamera erişimi yok; Android hızlı ayarlarından Feneri kullan.');return;}
+     const s=await openCamera(), track=s.getVideoTracks()[0], caps=track.getCapabilities?.()||{};
+     if(!caps.torch){stop(s);status('Bu telefon/tarayıcı feneri web sayfasından kontrol etmeye izin vermiyor. Hızlı ayarlardan Feneri kullan.');return;}
+     await track.applyConstraints({advanced:[{torch:true}]});torchStream=s;torchOn=true;$('torchBtn').classList.add('on');status('Fener açık. Kapatmak için tekrar dokun.');
+   }catch(e){status('Fener açılamadı. Android hızlı ayarlarından Feneri kullan.');}
+ });
+
+ $('screenshotBtn')?.addEventListener('click',async()=>{
+   if(!navigator.mediaDevices?.getDisplayMedia){status('Bu Chrome/Android açılışında ekran yakalama desteklenmiyor. Telefonun Güç + Ses Kısma tuşlarını kullan.');return;}
+   let s=null;
+   try{
+     s=await navigator.mediaDevices.getDisplayMedia({video:true});
+     const v=document.createElement('video');v.srcObject=s;await v.play();
+     await new Promise(r=>v.onloadedmetadata=r);
+     const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
+     c.toBlob(blob=>{
+       if(!blob){status('Ekran görüntüsü oluşturulamadı.');return;}
+       const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='EYMEN_Ekran_Goruntusu.png';a.click();
+       setTimeout(()=>URL.revokeObjectURL(url),30000);status('Ekran görüntüsü indirildi.');
+     },'image/png');
+   }catch(e){status('Ekran yakalama iptal edildi veya Chrome tarafından desteklenmiyor. Telefonda Güç + Ses Kısma tuşlarını kullan.');}
+   finally{stop(s);}
+ });
+
+ $('qrBtn')?.addEventListener('click',async()=>{
+   if(!('BarcodeDetector' in window)){status('Bu Chrome sürümünde yerleşik QR okuyucu yok. Güncel Chrome veya ayrı QR uygulaması gerekir.');return;}
+   try{
+     const detector=new BarcodeDetector({formats:['qr_code']});
+     cameraStream=await openCamera();$('cameraPreview').srcObject=cameraStream;$('cameraBox').hidden=false;$('qrBtn').classList.add('on');
+     $('qrResult').textContent='QR kodu kameranın önüne tut.';
+     qrTimer=setInterval(async()=>{
+       try{
+         const codes=await detector.detect($('cameraPreview'));
+         if(codes.length){$('qrResult').textContent='Okunan QR: '+codes[0].rawValue;status('QR kodu okundu.');clearInterval(qrTimer);qrTimer=null;}
+       }catch(e){}
+     },500);
+     status('QR okuyucu çalışıyor. İzin verildiğinde kodu kameraya göster.');
+   }catch(e){status('QR kamerası açılamadı. Kamera iznini kontrol et.');}
+ });
+
+ $('recorderBtn')?.addEventListener('click',async()=>{
+   if(recorder&&recorder.state==='recording'){
+     recorder.stop();$('recorderBtn').classList.remove('on');status('Ses kaydı tamamlanıyor…');return;
+   }
+   try{
+     if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status('Bu Chrome açılışında ses kaydı desteklenmiyor. HTTPS ve mikrofon izni gerekir.');return;}
+     recordingStream=await navigator.mediaDevices.getUserMedia({audio:true});
+     recordedChunks=[];recorder=new MediaRecorder(recordingStream);
+     recorder.ondataavailable=e=>{if(e.data&&e.data.size)recordedChunks.push(e.data);};
+     recorder.onstop=()=>{
+       const blob=new Blob(recordedChunks,{type:recorder.mimeType||'audio/webm'}),url=URL.createObjectURL(blob);
+       $('recordingPlayback').src=url;$('recordingBox').hidden=false;
+       $('recordingDownload').href=url;$('recordingDownload').download='EYMEN_Ses_Kaydi.webm';$('recordingDownload').textContent='⬇ Ses kaydını indir';$('recordingDownload').hidden=false;
+       stop(recordingStream);recordingStream=null;status('Ses kaydı hazır. Dinleyebilir veya indirebilirsin.');
+     };
+     recorder.start();$('recorderBtn').classList.add('on');status('Ses kaydediliyor. Bitirmek için tekrar dokun.');
+   }catch(e){status('Mikrofon açılamadı. Mikrofon izni ve HTTPS bağlantısı gerekir.');}
+ });
+ window.addEventListener('pagehide',()=>{stop(torchStream);stop(cameraStream);stop(recordingStream);});
+})();
+
+</script>
+</body></html>

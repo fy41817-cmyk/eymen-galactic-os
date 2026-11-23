@@ -1,0 +1,9 @@
+EYMEN GALACTIC OS V10.9 – Samsung Galaxy Note 9
+
+1) ZIP dosyasını telefona indirip çıkar.
+2) index.html dosyasını Chrome ile aç.
+3) Sistem kutucuğuna dokun. Yeni Hızlı Kontrol Merkezi burada görünür.
+4) Kamera, QR ve ses kaydı için tarayıcı izinleri gerekir. Bunlar Chrome'da HTTPS üzerinden açıldığında daha iyi desteklenir.
+5) content:// veya yerel dosya açılışında bazı Android/Chrome izinleri çalışmayabilir. Bu durumda kısayol açıkça desteklenmediğini bildirir.
+6) Fener, ekran yönü, ekran yakalama ve sistem ayarları Android/Chrome sürümüne bağlıdır. Wi-Fi, ses, parlaklık ve Rahatsız Etme düğmeleri ilgili Android ayar ekranını açmayı dener; sistem ayarlarını doğrudan değiştirmez.
+7) Eski verilerini korumak için önce eski sürümde Notlar/Görevler/Personel yedeğini al. Yeni klasör veya farklı site adresi yerel kayıtları ayrı tutabilir.

@@ -1,0 +1,8 @@
+{
+  "name": "EYMEN GALACTIC OS V10.9",
+  "short_name": "EYMEN",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#070d1a",
+  "theme_color": "#090b13"
+}
